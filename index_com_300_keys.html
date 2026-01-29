@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Death Store - Caixa da Sorte</title>
+
+<style>
+body {
+  background: radial-gradient(circle at top, #2a003d, #0b0014);
+  color: #fff;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  text-align: center;
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 40px;
+  color: #b84cff;
+  text-shadow: 0 0 20px #7a00ff;
+}
+
+input {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  width: 300px;
+  text-align: center;
+}
+
+button {
+  margin-top: 15px;
+  background: linear-gradient(135deg, #7a00ff, #b84cff);
+  border: none;
+  padding: 14px 40px;
+  font-size: 20px;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+}
+
+#abrir {
+  display: none;
+}
+
+.caixa {
+  width: 220px;
+  height: 220px;
+  margin-top: 30px;
+  background: linear-gradient(135deg, #7a00ff, #3a0066);
+  border-radius: 20px;
+  box-shadow: 0 0 40px #9d4cff;
+  display: none;
+  position: relative;
+}
+
+.caixa.chacoalhar {
+  animation: shake 0.4s infinite;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+  75% { transform: translateX(-10px); }
+  100% { transform: translateX(0); }
+}
+
+.fitinha {
+  position: absolute;
+  width: 8px;
+  height: 40px;
+  background: gold;
+  top: -50px;
+  animation: cair 1.5s linear forwards;
+}
+
+@keyframes cair {
+  to {
+    transform: translateY(300px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+#resultado {
+  margin-top: 25px;
+  font-size: 26px;
+  color: #e6ccff;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>☠️ Death Store ☠️</h1>
+<p>Digite sua key válida para desbloquear a Caixa da Sorte</p>
+
+<input id="keyInput" placeholder="Digite sua key">
+<button onclick="verificarKey()">Verificar Key</button>
+
+<button id="abrir" onclick="abrirCaixa()">🎁 Abrir Caixa</button>
+
+<div class="caixa" id="caixa"></div>
+<div id="resultado"></div>
+
+<script>
+const KEYS = [
+  "DEATH-001-NNDJD",
+  "DEATH-002-TPBX5",
+  "DEATH-003-RUWG2",
+  "DEATH-004-SJVHW",
+  "DEATH-005-79RAL",
+  "DEATH-006-1L205",
+  "DEATH-007-YLHW1",
+  "DEATH-008-RBE97",
+  "DEATH-009-5YFAB",
+  "DEATH-010-F7UOL",
+  "DEATH-011-34KBE",
+  "DEATH-012-XAYQR",
+  "DEATH-013-5V2MS",
+  "DEATH-014-V8GVK",
+  "DEATH-015-CHY70",
+  "DEATH-016-1JK78",
+  "DEATH-017-JWBWI",
+  "DEATH-018-M09PP",
+  "DEATH-019-R2VBO",
+  "DEATH-020-99Z7L",
+  "DEATH-021-16CS1",
+  "DEATH-022-9JP2M",
+  "DEATH-023-P9WPZ",
+  "DEATH-024-044T4",
+  "DEATH-025-07YQC",
+  "DEATH-026-PJAI2",
+  "DEATH-027-TK0SW",
+  "DEATH-028-DD58N",
+  "DEATH-029-GKMCK",
+  "DEATH-030-H70OT",
+  "DEATH-031-6K67M",
+  "DEATH-032-43GWS",
+  "DEATH-033-EM5ZD",
+  "DEATH-034-9EY4H",
+  "DEATH-035-QUFJ6",
+  "DEATH-036-2QW67",
+  "DEATH-037-HS95M",
+  "DEATH-038-ZANSO",
+  "DEATH-039-VDXXB",
+  "DEATH-040-BLFZM",
+  "DEATH-041-J32PX",
+  "DEATH-042-G7PON",
+  "DEATH-043-G9MPU",
+  "DEATH-044-59FMG",
+  "DEATH-045-PRGKB",
+  "DEATH-046-QKOYX",
+  "DEATH-047-YXR5Y",
+  "DEATH-048-E8X1S",
+  "DEATH-049-BM9P3",
+  "DEATH-050-6I7X0",
+  "DEATH-051-RMX8Q",
+  "DEATH-052-ZLVCQ",
+  "DEATH-053-ZHLPL",
+  "DEATH-054-F59EI",
+  "DEATH-055-9NIN4",
+  "DEATH-056-X0FXN",
+  "DEATH-057-MF4DK",
+  "DEATH-058-G6EWK",
+  "DEATH-059-FFWHL",
+  "DEATH-060-MQEGW",
+  "DEATH-061-1H1LC",
+  "DEATH-062-469FT",
+  "DEATH-063-ONTLY",
+  "DEATH-064-59EIR",
+  "DEATH-065-HDI15",
+  "DEATH-066-RIZAV",
+  "DEATH-067-IOJ8Q",
+  "DEATH-068-4AS0L",
+  "DEATH-069-9FUBB",
+  "DEATH-070-YCCFR",
+  "DEATH-071-DYE0E",
+  "DEATH-072-OHPFQ",
+  "DEATH-073-LLQYX",
+  "DEATH-074-EZBV5",
+  "DEATH-075-OAVKW",
+  "DEATH-076-DK3DH",
+  "DEATH-077-M77NO",
+  "DEATH-078-SO7TP",
+  "DEATH-079-XG450",
+  "DEATH-080-Q23BQ",
+  "DEATH-081-K8EKV",
+  "DEATH-082-TDYQ5",
+  "DEATH-083-TL4HW",
+  "DEATH-084-KR0WY",
+  "DEATH-085-DGI91",
+  "DEATH-086-65EGE",
+  "DEATH-087-3NBQ4",
+  "DEATH-088-354IJ",
+  "DEATH-089-VSE8Z",
+  "DEATH-090-0M2RO",
+  "DEATH-091-R13O0",
+  "DEATH-092-MN2I1",
+  "DEATH-093-ZC5AY",
+  "DEATH-094-MVP65",
+  "DEATH-095-ANNYE",
+  "DEATH-096-183PT",
+  "DEATH-097-XJO7A",
+  "DEATH-098-NF67M",
+  "DEATH-099-887GN",
+  "DEATH-100-LKQWY",
+  "DEATH-101-B61NF",
+  "DEATH-102-FXILO",
+  "DEATH-103-HW5LA",
+  "DEATH-104-F8OD4",
+  "DEATH-105-SF08N",
+  "DEATH-106-2J1AK",
+  "DEATH-107-JZUZG",
+  "DEATH-108-LZ67M",
+  "DEATH-109-UP04U",
+  "DEATH-110-J4GNX",
+  "DEATH-111-2916H",
+  "DEATH-112-2Q5V4",
+  "DEATH-113-T5Z5O",
+  "DEATH-114-Q3PAP",
+  "DEATH-115-3AMCA",
+  "DEATH-116-KL2YV",
+  "DEATH-117-WXZ4U",
+  "DEATH-118-40A6A",
+  "DEATH-119-9806Z",
+  "DEATH-120-A0U1R",
+  "DEATH-121-2MHFN",
+  "DEATH-122-30A1Q",
+  "DEATH-123-2U5HZ",
+  "DEATH-124-NGWPH",
+  "DEATH-125-1MXY2",
+  "DEATH-126-M4BFE",
+  "DEATH-127-AL5Y7",
+  "DEATH-128-LQV1R",
+  "DEATH-129-O9MHD",
+  "DEATH-130-QS8TS",
+  "DEATH-131-1GMV5",
+  "DEATH-132-0T87F",
+  "DEATH-133-MBIYT",
+  "DEATH-134-68HSB",
+  "DEATH-135-RB8KI",
+  "DEATH-136-IJ95U",
+  "DEATH-137-1AEZF",
+  "DEATH-138-AIRAA",
+  "DEATH-139-O95UC",
+  "DEATH-140-TW6JE",
+  "DEATH-141-DGIL1",
+  "DEATH-142-LV6AY",
+  "DEATH-143-GK6B6",
+  "DEATH-144-RVPHI",
+  "DEATH-145-ADLFO",
+  "DEATH-146-TFVV2",
+  "DEATH-147-POG0R",
+  "DEATH-148-7DZSO",
+  "DEATH-149-1G5RA",
+  "DEATH-150-POWAJ",
+  "DEATH-151-BO0XH",
+  "DEATH-152-3WKQN",
+  "DEATH-153-QQ21B",
+  "DEATH-154-SARBH",
+  "DEATH-155-XOB4Z",
+  "DEATH-156-R0AYR",
+  "DEATH-157-YBKGH",
+  "DEATH-158-V954K",
+  "DEATH-159-0IAMG",
+  "DEATH-160-TMU4J",
+  "DEATH-161-BA1E6",
+  "DEATH-162-P08ZN",
+  "DEATH-163-F3UNT",
+  "DEATH-164-XTJMZ",
+  "DEATH-165-6QPLW",
+  "DEATH-166-VN4PX",
+  "DEATH-167-145SL",
+  "DEATH-168-C807K",
+  "DEATH-169-1O95E",
+  "DEATH-170-8WW89",
+  "DEATH-171-ZK9Z4",
+  "DEATH-172-BSTEO",
+  "DEATH-173-J2K3B",
+  "DEATH-174-NHPC9",
+  "DEATH-175-PQVQP",
+  "DEATH-176-2IPBE",
+  "DEATH-177-HHPSB",
+  "DEATH-178-VZ1A4",
+  "DEATH-179-HCXAL",
+  "DEATH-180-CK6VT",
+  "DEATH-181-2AQB3",
+  "DEATH-182-K9UE8",
+  "DEATH-183-UZ9SL",
+  "DEATH-184-Y8PA7",
+  "DEATH-185-16B9K",
+  "DEATH-186-KIT8U",
+  "DEATH-187-Q4P95",
+  "DEATH-188-FYU6S",
+  "DEATH-189-9C9NV",
+  "DEATH-190-D8MHD",
+  "DEATH-191-QMRQ7",
+  "DEATH-192-7JPC5",
+  "DEATH-193-VN4QE",
+  "DEATH-194-MYO0H",
+  "DEATH-195-V5XAU",
+  "DEATH-196-DAONX",
+  "DEATH-197-IC8VO",
+  "DEATH-198-QMXXG",
+  "DEATH-199-0PX4S",
+  "DEATH-200-TGXV8",
+  "DEATH-201-VLHBZ",
+  "DEATH-202-EB5C5",
+  "DEATH-203-RE38C",
+  "DEATH-204-23P7G",
+  "DEATH-205-0R45X",
+  "DEATH-206-5F4AQ",
+  "DEATH-207-1IEMC",
+  "DEATH-208-WKDKT",
+  "DEATH-209-XXDKF",
+  "DEATH-210-IMZZL",
+  "DEATH-211-XNPL9",
+  "DEATH-212-KEB3X",
+  "DEATH-213-J2OL3",
+  "DEATH-214-D18M7",
+  "DEATH-215-SEFJS",
+  "DEATH-216-NI7NQ",
+  "DEATH-217-MZMN6",
+  "DEATH-218-UF9FA",
+  "DEATH-219-B94Q6",
+  "DEATH-220-1O4QP",
+  "DEATH-221-EVWXI",
+  "DEATH-222-KK7VA",
+  "DEATH-223-SFN03",
+  "DEATH-224-B55CC",
+  "DEATH-225-JFCV6",
+  "DEATH-226-26MEO",
+  "DEATH-227-975D3",
+  "DEATH-228-TUH5G",
+  "DEATH-229-BQTZN",
+  "DEATH-230-9L5UV",
+  "DEATH-231-5VU5S",
+  "DEATH-232-NETMX",
+  "DEATH-233-PJMTD",
+  "DEATH-234-CRIZT",
+  "DEATH-235-JWSEB",
+  "DEATH-236-SXCUJ",
+  "DEATH-237-NT5EA",
+  "DEATH-238-BI21O",
+  "DEATH-239-3R5FN",
+  "DEATH-240-7A48X",
+  "DEATH-241-EJTH9",
+  "DEATH-242-BXVX3",
+  "DEATH-243-W48MH",
+  "DEATH-244-6OQJY",
+  "DEATH-245-VRVS4",
+  "DEATH-246-Z2H24",
+  "DEATH-247-1J4CN",
+  "DEATH-248-TGWUL",
+  "DEATH-249-LYZVB",
+  "DEATH-250-FUAB4",
+  "DEATH-251-R9OR6",
+  "DEATH-252-LHF7P",
+  "DEATH-253-IKGGZ",
+  "DEATH-254-OXZBO",
+  "DEATH-255-RATPR",
+  "DEATH-256-WOD0U",
+  "DEATH-257-LFYEB",
+  "DEATH-258-7T0X7",
+  "DEATH-259-0NVR9",
+  "DEATH-260-6KNOV",
+  "DEATH-261-9QH74",
+  "DEATH-262-EOAQM",
+  "DEATH-263-QGYAG",
+  "DEATH-264-RIBU9",
+  "DEATH-265-VJBZZ",
+  "DEATH-266-FENGY",
+  "DEATH-267-UA3B5",
+  "DEATH-268-H9V5L",
+  "DEATH-269-NFEVN",
+  "DEATH-270-XF9DG",
+  "DEATH-271-GPQMK",
+  "DEATH-272-B1CYZ",
+  "DEATH-273-YCVSD",
+  "DEATH-274-GY7L2",
+  "DEATH-275-CRNIS",
+  "DEATH-276-ULHKS",
+  "DEATH-277-ZZELO",
+  "DEATH-278-1GW23",
+  "DEATH-279-DZLPL",
+  "DEATH-280-CH9SP",
+  "DEATH-281-ZFFU4",
+  "DEATH-282-T9DQS",
+  "DEATH-283-D0OV5",
+  "DEATH-284-IT44M",
+  "DEATH-285-1J1V9",
+  "DEATH-286-5A4LG",
+  "DEATH-287-DE7YN",
+  "DEATH-288-P1HEB",
+  "DEATH-289-OLPJX",
+  "DEATH-290-896M1",
+  "DEATH-291-5Z999",
+  "DEATH-292-P8LZK",
+  "DEATH-293-B0NQX",
+  "DEATH-294-YO29E",
+  "DEATH-295-EGYXF",
+  "DEATH-296-6OA6G",
+  "DEATH-297-4GJ43",
+  "DEATH-298-OK519",
+  "DEATH-299-QLJPZ",
+  "DEATH-300-F3Q0B"
+];
+
+const premios = [
+  "1.000.000 de Gemas 💎",
+  "2.000.000 de Gemas 💎",
+  "3.000.000 de Gemas 💎",
+  "5.000.000 de Gemas 💎"
+];
+
+function verificarKey() {
+  const key = keyInput.value.trim();
+  if (!KEYS.includes(key)) {
+    resultado.innerText = "❌ Key inválida.";
+    return;
+  }
+  if (localStorage.getItem(key)) {
+    resultado.innerText = "❌ Essa key já foi usada.";
+    return;
+  }
+  resultado.innerText = "✅ Key válida! Abra sua caixa.";
+  document.getElementById("abrir").style.display = "inline-block";
+}
+
+function abrirCaixa() {
+  const caixa = document.getElementById("caixa");
+  caixa.style.display = "block";
+  caixa.classList.add("chacoalhar");
+  resultado.innerText = "";
+
+  // soltar fitinhas
+  for (let i = 0; i < 20; i++) {
+    const f = document.createElement("div");
+    f.className = "fitinha";
+    f.style.left = Math.random() * 220 + "px";
+    f.style.background = ["gold","violet","cyan","lime"][Math.floor(Math.random()*4)];
+    caixa.appendChild(f);
+    setTimeout(() => f.remove(), 1500);
+  }
+
+  setTimeout(() => {
+    caixa.classList.remove("chacoalhar");
+    const premio = premios[Math.floor(Math.random() * premios.length)];
+    resultado.innerText = "🎉 Parabéns! Você ganhou " + premio;
+    localStorage.setItem(keyInput.value.trim(), "usada");
+  }, 3000);
+}
+</script>
+
+</body>
+</html>
