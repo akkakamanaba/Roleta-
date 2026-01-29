@@ -110,30 +110,16 @@ button {
 <div id="resultado"></div>
 
 <script>
-const KEYS = [
-  "DEATH-01X9A","DEATH-02K7Q","DEATH-03M8Z","DEATH-04P2W","DEATH-05R9E",
-  "DEATH-06T4A","DEATH-07Y8K","DEATH-08L5D","DEATH-09C2X","DEATH-10ZQ7M"
-];
-
+function pegarKeys() {
+  return JSON.parse(localStorage.getItem("GERADOR_KEYS")) || [];
+}
 const premios = [
   "1.000.000 de Gemas 💎",
   "2.000.000 de Gemas 💎",
   "1.500.000 de Gemas 💎",
 ];
 
-function verificarKey() {
-  const key = keyInput.value.trim();
-  if (!KEYS.includes(key)) {
-    resultado.innerText = "❌ Key inválida.";
-    return;
-  }
-  if (localStorage.getItem(key)) {
-    resultado.innerText = "❌ Essa key já foi usada.";
-    return;
-  }
-  resultado.innerText = "✅ Key válida! Abra sua caixa.";
-  document.getElementById("abrir").style.display = "inline-block";
-}
+
 
 function abrirCaixa() {
   const caixa = document.getElementById("caixa");
@@ -144,7 +130,25 @@ function abrirCaixa() {
   // soltar fitinhas
   for (let i = 0; i < 20; i++) {
     const f = document.createElement("div");
-    f.className = "fitinha";
+    f.className = "fitinha";function verificarKey() {
+  const key = keyInput.value.trim();
+  const keys = pegarKeys();
+
+  const encontrada = keys.find(k => k.key === key);
+
+  if (!encontrada) {
+    resultado.innerText = "❌ Key inválida.";
+    return;
+  }
+
+  if (encontrada.usada) {
+    resultado.innerText = "❌ Essa key já foi usada.";
+    return;
+  }
+
+  resultado.innerText = "✅ Key válida! Abra sua caixa.";
+  document.getElementById("abrir").style.display = "inline-block";
+}
     f.style.left = Math.random() * 220 + "px";
     f.style.background = ["gold","violet","cyan","lime"][Math.floor(Math.random()*4)];
     caixa.appendChild(f);
@@ -155,7 +159,15 @@ function abrirCaixa() {
     caixa.classList.remove("chacoalhar");
     const premio = premios[Math.floor(Math.random() * premios.length)];
     resultado.innerText = "🎉 Parabéns! Você ganhou " + premio;
-    localStorage.setItem(keyInput.value.trim(), "usada");
+    let keys = JSON.parse(localStorage.getItem("GERADOR_KEYS")) || [];
+
+keys = keys.map(k =>
+  k.key === keyInput.value.trim()
+    ? { key: k.key, usada: true }
+    : k
+);
+
+localStorage.setItem("GERADOR_KEYS", JSON.stringify(keys));
   }, 3000);
 }
 </script>
