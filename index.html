@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Death Store - Caixa da Sorte</title>
+
+<style>
+body {
+  background: radial-gradient(circle at top, #2a003d, #0b0014);
+  color: #fff;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  text-align: center;
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 40px;
+  color: #b84cff;
+  text-shadow: 0 0 20px #7a00ff;
+}
+
+input {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  width: 300px;
+  text-align: center;
+}
+
+button {
+  margin-top: 15px;
+  background: linear-gradient(135deg, #7a00ff, #b84cff);
+  border: none;
+  padding: 14px 40px;
+  font-size: 20px;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+}
+
+#abrir {
+  display: none;
+}
+
+.caixa {
+  width: 220px;
+  height: 220px;
+  margin-top: 30px;
+  background: linear-gradient(135deg, #7a00ff, #3a0066);
+  border-radius: 20px;
+  box-shadow: 0 0 40px #9d4cff;
+  display: none;
+  position: relative;
+}
+
+.caixa.chacoalhar {
+  animation: shake 0.4s infinite;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+  75% { transform: translateX(-10px); }
+  100% { transform: translateX(0); }
+}
+
+.fitinha {
+  position: absolute;
+  width: 8px;
+  height: 40px;
+  background: gold;
+  top: -50px;
+  animation: cair 1.5s linear forwards;
+}
+
+@keyframes cair {
+  to {
+    transform: translateY(300px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+#resultado {
+  margin-top: 25px;
+  font-size: 26px;
+  color: #e6ccff;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>☠️ Death Store ☠️</h1>
+<p>Digite sua key válida para desbloquear a Caixa da Sorte</p>
+
+<input id="keyInput" placeholder="Digite sua key">
+<button onclick="verificarKey()">Verificar Key</button>
+
+<button id="abrir" onclick="abrirCaixa()">🎁 Abrir Caixa</button>
+
+<div class="caixa" id="caixa"></div>
+<div id="resultado"></div>
+
+<script>
+const KEYS = [
+  "DEATH-01X9A","DEATH-02K7Q","DEATH-03M8Z","DEATH-04P2W","DEATH-05R9E",
+  "DEATH-06T4A","DEATH-07Y8K","DEATH-08L5D","DEATH-09C2X","DEATH-10ZQ7M"
+];
+
+const premios = [
+  "1.000.000 de Gemas 💎",
+  "2.000.000 de Gemas 💎",
+  "3.000.000 de Gemas 💎",
+  "5.000.000 de Gemas 💎"
+];
+
+function verificarKey() {
+  const key = keyInput.value.trim();
+  if (!KEYS.includes(key)) {
+    resultado.innerText = "❌ Key inválida.";
+    return;
+  }
+  if (localStorage.getItem(key)) {
+    resultado.innerText = "❌ Essa key já foi usada.";
+    return;
+  }
+  resultado.innerText = "✅ Key válida! Abra sua caixa.";
+  document.getElementById("abrir").style.display = "inline-block";
+}
+
+function abrirCaixa() {
+  const caixa = document.getElementById("caixa");
+  caixa.style.display = "block";
+  caixa.classList.add("chacoalhar");
+  resultado.innerText = "";
+
+  // soltar fitinhas
+  for (let i = 0; i < 20; i++) {
+    const f = document.createElement("div");
+    f.className = "fitinha";
+    f.style.left = Math.random() * 220 + "px";
+    f.style.background = ["gold","violet","cyan","lime"][Math.floor(Math.random()*4)];
+    caixa.appendChild(f);
+    setTimeout(() => f.remove(), 1500);
+  }
+
+  setTimeout(() => {
+    caixa.classList.remove("chacoalhar");
+    const premio = premios[Math.floor(Math.random() * premios.length)];
+    resultado.innerText = "🎉 Parabéns! Você ganhou " + premio;
+    localStorage.setItem(keyInput.value.trim(), "usada");
+  }, 3000);
+}
+</script>
+
+</body>
+</html>
