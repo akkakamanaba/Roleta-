@@ -6,52 +6,31 @@
 
 <style>
 body {
-  background: radial-gradient(circle at top, #2a003d, #0b0014);
-  color: #fff;
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  flex-direction: column;
-  text-align: center;
+  background:#0b0014;
+  color:#fff;
+  font-family:Arial,sans-serif;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  text-align:center;
 }
-
-h1 {
-  font-size: 40px;
-  color: #b84cff;
-  text-shadow: 0 0 20px #7a00ff;
+input,button{
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
 }
-
-input {
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: none;
-  width: 300px;
-  text-align: center;
+button{
+  background:#7a00ff;
+  color:#fff;
+  font-size:18px;
+  cursor:pointer;
 }
-
-button {
-  margin-top: 15px;
-  background: linear-gradient(135deg, #7a00ff, #b84cff);
-  border: none;
-  padding: 14px 40px;
-  font-size: 20px;
-  border-radius: 12px;
-  color: white;
-  cursor: pointer;
-}
-
-#abrir {
-  display: none;
-}
-
-#resultado {
-  margin-top: 25px;
-  font-size: 24px;
-  color: #e6ccff;
-  font-weight: bold;
+#resultado{
+  margin-top:20px;
+  font-size:22px;
 }
 </style>
 </head>
@@ -59,55 +38,52 @@ button {
 <body>
 
 <h1>🍀 DEATH STORE ☘️</h1>
-<p>Digite sua key válida para desbloquear a Caixa da Sorte</p>
 
-<input id="keyInput" placeholder="EX: DEATH-001-A1B2C">
-<button onclick="verificarKey()">Verificar Key</button>
-
-<button id="abrir" onclick="abrirCaixa()">🎁 Abrir Caixa</button>
+<input id="keyInput" placeholder="DEATH-001-ABCDE">
+<button onclick="verificarKey()">Verificar</button>
+<button id="abrir" onclick="abrirCaixa()" style="display:none">🎁 Abrir Caixa</button>
 
 <div id="resultado"></div>
 
 <script>
 const KEYS = [
-  "DEATH-001-A1B2C","DEATH-002-A2B3C","DEATH-003-A3B4C","DEATH-004-A4B5C",
-  "DEATH-005-A5B6C","DEATH-006-A6B7C","DEATH-007-A7B8C","DEATH-008-A8B9C",
-  "DEATH-009-A9B1C","DEATH-010-A1B2D",
-  /* … segue o mesmo padrão … */
-  "DEATH-300-A9B9C"
+  "DEATH-001-ABCDE",
+  "DEATH-002-BCDEA",
+  "DEATH-003-CDEAB",
+  "DEATH-004-DEABC",
+  "DEATH-005-EABCD"
 ];
 
 const premios = [
   "1.000.000 de Gemas 💎",
   "2.000.000 de Gemas 💎",
-  "2,500.000 de Gemas 💎",
-  "1.500.000 de Gemas 💎"
+  "5.000.000 de Gemas 💎"
 ];
 
 let keyAtual = "";
 
-function verificarKey() {
+function verificarKey(){
   keyAtual = keyInput.value.trim().toUpperCase();
 
-  if (!KEYS.includes(keyAtual)) {
-    resultado.innerText = "❌ Key inválida.";
+  if(!KEYS.includes(keyAtual)){
+    resultado.innerText = "❌ Key inválida";
     return;
   }
 
-  if (localStorage.getItem("KEY_" + keyAtual)) {
-    resultado.innerText = "❌ Essa key já foi usada.";
+  if(localStorage.getItem("KEY_"+keyAtual)){
+    resultado.innerText = "❌ Key já usada";
     return;
   }
 
-  resultado.innerText = "✅ Key válida! Abra sua caixa.";
-  document.getElementById("abrir").style.display = "inline-block";
+  resultado.innerText = "✅ Key válida";
+  abrir.style.display = "inline-block";
 }
 
-function abrirCaixa() {
-  const premio = premios[Math.floor(Math.random() * premios.length)];
-  resultado.innerText = "🎉 Parabéns! Você ganhou " + premio;
-  localStorage.setItem("KEY_" + keyAtual, "USADA");
-  document.getElementById("abrir").style.display = "none";
+function abrirCaixa(){
+  const premio = premios[Math.floor(Math.random()*premios.length)];
+  resultado.innerText = "🎉 Você ganhou " + premio;
+  localStorage.setItem("KEY_"+keyAtual,"USADA");
+  abrir.style.display = "none";
 }
 </script>
 
