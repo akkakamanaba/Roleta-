@@ -130,8 +130,8 @@ const SINGLE_USE_KEYS = [
 ];
 
 const premios = [
- "900k 💎","1M 💎","1.05M 💎","1.1M 💎",
- "1.15M 💎","1.200.000 gemas 💎","1.25M 💎","1.3M 💎"
+ "3 KEY","50.000.000 💎","25.050.000M 💎","1.100.000M 💎",
+ "10 KEY","7.00.000 gemas 💎", "10 KEY","8.00.000 gemas 💎","1.100.000 💎","15.000.000 💎","2.000.000M 💎","4.400.000 💎","15.000.000 💎","2.000.000M 💎"
 ];
 const TARGET_INDEX = 5;
 
@@ -203,7 +203,7 @@ function girar(){
   roleta.style.transform=`rotate(${rot}deg)`;
 
   setTimeout(()=>{
-    resultado.innerText="🎉 Você ganhou 1.200.000 gemas 💎";
+    resultado.innerText="🎉 Você ganhou 1.100.000 gemas 💎";
     if(keyAtual!==PERMANENT_KEY){
       localStorage.setItem("used_"+keyAtual,"true");
     }
