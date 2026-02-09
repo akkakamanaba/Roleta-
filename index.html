@@ -121,7 +121,8 @@ const roleta = document.getElementById("roleta");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-let rot = 0, girou = false, keyAtual = "";
+let girou = false;
+let keyAtual = "";
 
 function verificarKey(){
   const k = keyInput.value.trim();
@@ -149,9 +150,9 @@ function verificarKey(){
 
 function liberar(msg){
   resultado.innerText = msg;
-  girarBtn.style.display = "inline-block";
-  wrap.style.display = "block";
-  girou = false;
+  girarBtn.style.display="inline-block";
+  wrap.style.display="block";
+  girou=false;
 }
 
 function desenhar(){
@@ -168,9 +169,9 @@ function desenhar(){
     ctx.save();
     ctx.translate(160,160);
     ctx.rotate(i*ang + ang/2);
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 13px Arial";
-    ctx.fillText(premios[i], 90, 5);
+    ctx.fillStyle="#fff";
+    ctx.font="bold 13px Arial";
+    ctx.fillText(premios[i],90,5);
     ctx.restore();
   }
 }
@@ -185,26 +186,21 @@ function girar(){
 
   if (r < 50) {
     index = premios.indexOf("2.000.000 💎");
-  }
-  else if (r < 100) {
+  } else if (r < 100) {
     index = premios.indexOf("1.100.000 💎");
-  }
-  else {
+  } else {
     index = premios.indexOf("700.000 💎");
   }
 
   const slice = 360 / premios.length;
+  const stop = 360 - (index * slice + slice / 2) - 90;
 
-  // correção de -90° para alinhar com o ponteiro
-  const stop = (360 - (index * slice + slice / 2) - 90) % 360;
-
-  rot += 360 * 8 + stop;
-  roleta.style.transform = `rotate(${rot}deg)`;
+  roleta.style.transform = `rotate(${360*6 + stop}deg)`;
 
   setTimeout(()=>{
-    resultado.innerText = "🎉 Você ganhou " + premios[index];
-    if(keyAtual !== PERMANENT_KEY){
-      localStorage.setItem("used_" + keyAtual, "true");
+    resultado.innerText="🎉 Você ganhou " + premios[index];
+    if(keyAtual!==PERMANENT_KEY){
+      localStorage.setItem("used_"+keyAtual,"true");
     }
   },4000);
 }
