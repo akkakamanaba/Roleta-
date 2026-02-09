@@ -69,7 +69,6 @@ button{
   border-radius:50%;
   box-shadow:0 0 40px #9d4cff;
   overflow:hidden;
-  transition:transform 4s cubic-bezier(.12,.78,.12,1);
 }
 
 canvas{width:100%;height:100%}
@@ -101,58 +100,23 @@ canvas{width:100%;height:100%}
 <div id="resultado"></div>
 
 <script>
-const PERMANENT_KEY = "DEATH-PERMA-044";
-
-const SINGLE_USE_KEYS = [
-  "STORE-1A7KD","STORE-9X2LM","STORE-4Q8ZT","STORE-6N3BV","STORE-0P5WR",
-  "STORE-8HJ2C","STORE-3TY9M","STORE-5LK7A","STORE-2DF6X","STORE-7UZ4N",
-  "DEATH-1QW8E","DEATH-3RT6Y","DEATH-9PL2K","DEATH-4VN7D","DEATH-8MX5S",
-  "DEATH-6CB1F","DEATH-2GH9L","DEATH-5JK3Z","DEATH-0TR4B","DEATH-7YX8P"
-];
-
 const premios = [
  "50.000.000 💎","25.000.000 💎","15.000.000 💎","10 KEY",
  "2.000.000 💎","1.100.000 💎","700.000 💎"
 ];
 
-const girarBtn = document.getElementById("girar");
-const wrap = document.getElementById("roletaWrap");
-const roleta = document.getElementById("roleta");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const roleta = document.getElementById("roleta");
+const girarBtn = document.getElementById("girar");
+const wrap = document.getElementById("roletaWrap");
 
-let girou = false;
-let keyAtual = "";
+let anguloAtual = 0;
+let girando = false;
 
 function verificarKey(){
-  const k = keyInput.value.trim();
-  keyAtual = "";
-
-  if (k === PERMANENT_KEY){
-    liberar("✅ Key permanente aceita!");
-    keyAtual = k;
-    return;
-  }
-
-  if (!SINGLE_USE_KEYS.includes(k)){
-    resultado.innerText = "❌ Key inválida";
-    return;
-  }
-
-  if (localStorage.getItem("used_"+k)){
-    resultado.innerText = "❌ Essa key já foi usada";
-    return;
-  }
-
-  liberar("✅ Key válida! Pode girar");
-  keyAtual = k;
-}
-
-function liberar(msg){
-  resultado.innerText = msg;
   girarBtn.style.display="inline-block";
   wrap.style.display="block";
-  girou=false;
 }
 
 function desenhar(){
@@ -177,31 +141,32 @@ function desenhar(){
 }
 desenhar();
 
+function sortearIndice(){
+  let r = Math.random() * 100;
+
+  if (r < 50) return premios.indexOf("2.000.000 💎");
+  if (r < 85) return premios.indexOf("1.100.000 💎");
+  return premios.indexOf("700.000 💎");
+}
+
 function girar(){
-  if(girou) return;
-  girou = true;
+  if(girando) return;
+  girando = true;
 
-  let r = Math.random() * 120;
-  let index;
-
-  if (r < 50) {
-    index = premios.indexOf("2.000.000 💎");
-  } else if (r < 100) {
-    index = premios.indexOf("1.100.000 💎");
-  } else {
-    index = premios.indexOf("700.000 💎");
-  }
-
+  const index = sortearIndice();
   const slice = 360 / premios.length;
-  const stop = 360 - (index * slice + slice / 2) - 90;
 
-  roleta.style.transform = `rotate(${360*6 + stop}deg)`;
+  const destino = 360 * 6 + (360 - (index * slice + slice / 2)) - 90;
+
+  anguloAtual = destino;
+
+  roleta.style.transition = "transform 4s cubic-bezier(.12,.78,.12,1)";
+  roleta.style.transform = `rotate(${anguloAtual}deg)`;
 
   setTimeout(()=>{
-    resultado.innerText="🎉 Você ganhou " + premios[index];
-    if(keyAtual!==PERMANENT_KEY){
-      localStorage.setItem("used_"+keyAtual,"true");
-    }
+    document.getElementById("resultado").innerText =
+      "🎉 Você ganhou " + premios[index];
+    girando = false;
   },4000);
 }
 </script>
