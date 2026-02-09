@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -22,7 +21,7 @@ body{
 h1{
   color:#b84cff;
   text-shadow:0 0 20px #7a00ff;
-  margin-top:20px;
+  margin:25px 0 10px;
 }
 
 input{
@@ -46,21 +45,8 @@ button{
 
 #girar{display:none}
 
-.mascote{
-  width:170px;
-  margin:10px;
-  border-radius:20px;
-  box-shadow:0 0 35px rgba(184,76,255,.8);
-  animation:flutuar 4s ease-in-out infinite;
-}
-
-@keyframes flutuar{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
-}
-
 .roleta-wrap{
-  margin-top:20px;
+  margin-top:25px;
   width:320px;
   height:320px;
   display:none;
@@ -98,9 +84,8 @@ canvas{width:100%;height:100%}
 
 <body>
 
-<h1>🎰 death store 🎰/h1>
-<img src="https://raw.githubusercontent.com/akkamanaba/Roleta-/main/IMG_2914.jpeg" class="mascote">
-  
+<h1>🍀 death store 🍀</h1>
+
 <p>Digite sua key válida</p>
 <input id="keyInput" placeholder="Digite sua key">
 <button onclick="verificarKey()">Verificar Key</button>
@@ -122,25 +107,21 @@ const SINGLE_USE_KEYS = [
   "STORE-1A7KD","STORE-9X2LM","STORE-4Q8ZT","STORE-6N3BV","STORE-0P5WR",
   "STORE-8HJ2C","STORE-3TY9M","STORE-5LK7A","STORE-2DF6X","STORE-7UZ4N",
   "DEATH-1QW8E","DEATH-3RT6Y","DEATH-9PL2K","DEATH-4VN7D","DEATH-8MX5S",
-  "DEATH-6CB1F","DEATH-2GH9L","DEATH-5JK3Z","DEATH-0TR4B","DEATH-7YX8P",
-  "STORE-0D4J0","STORE-06DJN","STORE-0CM3N","STORE-0J46N","STORE-0KCMN",
-  "STORE-00CMD","STORE-02MXJ","STORE-04LKF","STORE-06VMV","STORE-01KDC",
-  "STORE-01MYB","STORE-04FLV","STORE-08T4X","STORE-07ZZZ","DEATH-07JVV",
-  "DEATH-09K7O","DEATH-07M2T","DEATH-06P3M","DEATH-05F1M","DEATH-02K2A"
+  "DEATH-6CB1F","DEATH-2GH9L","DEATH-5JK3Z","DEATH-0TR4B","DEATH-7YX8P"
 ];
 
 const premios = [
- "3 KEY","50.000.000 💎","25.050.000M 💎","1.100.000M 💎",
- "10 KEY","7.00.000 gemas 💎", "10 KEY","8.00.000 gemas 💎","1.100.000 💎","15.000.000 💎","2.000.000M 💎","4.400.000 💎","15.000.000 💎","2.000.000M 💎"
+ "50.000.000 💎","25.000.000 💎","15.000.000 💎","10 KEY",
+ "2.000.000 💎","1.100.000 💎","700.000 💎"
 ];
-const TARGET_INDEX = 5;
 
 const girarBtn = document.getElementById("girar");
 const wrap = document.getElementById("roletaWrap");
 const roleta = document.getElementById("roleta");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-let rot=0, girou=false, keyAtual="";
+
+let rot = 0, girou = false, keyAtual = "";
 
 function verificarKey(){
   const k = keyInput.value.trim();
@@ -168,26 +149,28 @@ function verificarKey(){
 
 function liberar(msg){
   resultado.innerText = msg;
-  girarBtn.style.display="inline-block";
-  wrap.style.display="block";
-  girou=false;
+  girarBtn.style.display = "inline-block";
+  wrap.style.display = "block";
+  girou = false;
 }
 
 function desenhar(){
-  const n=premios.length;
-  const ang=Math.PI*2/n;
+  const n = premios.length;
+  const ang = Math.PI * 2 / n;
+
   for(let i=0;i<n;i++){
     ctx.beginPath();
     ctx.moveTo(160,160);
     ctx.arc(160,160,150,i*ang,(i+1)*ang);
-    ctx.fillStyle=i%2?"#3a0066":"#7a00ff";
+    ctx.fillStyle = i%2 ? "#3a0066" : "#7a00ff";
     ctx.fill();
+
     ctx.save();
     ctx.translate(160,160);
-    ctx.rotate(i*ang+ang/2);
-    ctx.fillStyle="#fff";
-    ctx.font="bold 13px Arial";
-    ctx.fillText(premios[i],110,5);
+    ctx.rotate(i*ang + ang/2);
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 13px Arial";
+    ctx.fillText(premios[i], 95, 5);
     ctx.restore();
   }
 }
@@ -195,17 +178,31 @@ desenhar();
 
 function girar(){
   if(girou) return;
-  girou=true;
+  girou = true;
 
-  const slice=360/premios.length;
-  const stop=(360-(TARGET_INDEX*slice+slice/2))%360;
-  rot+=360*8+stop;
-  roleta.style.transform=`rotate(${rot}deg)`;
+  let r = Math.random() * 120;
+  let index;
+
+  if (r < 50) {
+    index = premios.indexOf("2.000.000 💎");
+  }
+  else if (r < 100) {
+    index = premios.indexOf("1.100.000 💎");
+  }
+  else {
+    index = premios.indexOf("700.000 💎");
+  }
+
+  const slice = 360 / premios.length;
+  const stop = (360 - (index * slice + slice / 2)) % 360;
+
+  rot += 360 * 8 + stop;
+  roleta.style.transform = `rotate(${rot}deg)`;
 
   setTimeout(()=>{
-    resultado.innerText="🎉 Você ganhou 1.100.000 gemas 💎";
-    if(keyAtual!==PERMANENT_KEY){
-      localStorage.setItem("used_"+keyAtual,"true");
+    resultado.innerText = "🎉 Você ganhou " + premios[index];
+    if(keyAtual !== PERMANENT_KEY){
+      localStorage.setItem("used_" + keyAtual, "true");
     }
   },4000);
 }
