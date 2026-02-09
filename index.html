@@ -170,7 +170,7 @@ function desenhar(){
     ctx.rotate(i*ang + ang/2);
     ctx.fillStyle = "#fff";
     ctx.font = "bold 13px Arial";
-    ctx.fillText(premios[i], 95, 5);
+    ctx.fillText(premios[i], 90, 5);
     ctx.restore();
   }
 }
@@ -194,7 +194,9 @@ function girar(){
   }
 
   const slice = 360 / premios.length;
-  const stop = (360 - (index * slice + slice / 2)) % 360;
+
+  // correção de -90° para alinhar com o ponteiro
+  const stop = (360 - (index * slice + slice / 2) - 90) % 360;
 
   rot += 360 * 8 + stop;
   roleta.style.transform = `rotate(${rot}deg)`;
