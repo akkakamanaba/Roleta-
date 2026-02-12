@@ -100,29 +100,6 @@ canvas{width:100%;height:100%}
 <div id="resultado"></div>
 
 <script>
-
-// 🔐 LISTA DE 15 KEYS
-const keysValidas = [
-"DEATH-7KX21",
-"DEATH-9PL44",
-"DEATH-3AZ88",
-"DEATH-5TY67",
-"DEATH-2NM90",
-"DEATH-8QR11",
-"DEATH-6BC42",
-"DEATH-4DF73",
-"DEATH-1GH55",
-"DEATH-0JK26",
-"DEATH-9ZX81",
-"DEATH-3WE64",
-"DEATH-5ER29",
-"DEATH-8UI10",
-"DEATH-6OP72"
-];
-
-// pega keys usadas
-let keysUsadas = JSON.parse(localStorage.getItem("keysUsadas")) || [];
-
 const premios = [
  "50.000.000 💎","25.000.000 💎","15.000.000 💎","10 KEY",
  "2.000.000 💎","2.500.000 💎","2.000.000 💎"
@@ -133,41 +110,15 @@ const ctx = canvas.getContext("2d");
 const roleta = document.getElementById("roleta");
 const girarBtn = document.getElementById("girar");
 const wrap = document.getElementById("roletaWrap");
-const resultado = document.getElementById("resultado");
 
 let anguloAtual = 0;
 let girando = false;
 
-
-// ✅ VERIFICAR KEY
 function verificarKey(){
-
- const key = document.getElementById("keyInput").value.trim().toUpperCase();
-
- if(!keysValidas.includes(key)){
-   resultado.innerText = "❌ Key inválida!";
-   resultado.style.color = "#ff4d6d";
-   return;
- }
-
- if(keysUsadas.includes(key)){
-   resultado.innerText = "⚠️ Essa key já foi usada!";
-   resultado.style.color = "orange";
-   return;
- }
-
- resultado.innerText = "✅ Key válida! Pode girar.";
- resultado.style.color = "#00ffae";
-
- girarBtn.style.display="inline-block";
- wrap.style.display="block";
-
- // salva temporariamente a key atual
- localStorage.setItem("keyAtual", key);
+  girarBtn.style.display="inline-block";
+  wrap.style.display="block";
 }
 
-
-// 🎨 DESENHAR ROLETA
 function desenhar(){
   const n = premios.length;
   const ang = Math.PI * 2 / n;
@@ -190,29 +141,16 @@ function desenhar(){
 }
 desenhar();
 
-
-// 🎯 SORTEIO CONTROLADO
 function sortearIndice(){
   let r = Math.random() * 100;
 
-  if (r < 5) return 0; // prêmio raro
-  if (r < 15) return 1;
-  if (r < 30) return 2;
-  if (r < 40) return 3;
-
-  return Math.floor(Math.random() * premios.length);
+  if (r < 50) return premios.indexOf("2.000.000 💎");
+  if (r < 85) return premios.indexOf("2.500.000 💎");
+  return premios.indexOf("2.000.000 💎");
 }
 
-
-// 🎡 GIRAR
 function girar(){
-
   if(girando) return;
-
-  const key = localStorage.getItem("keyAtual");
-
-  if(!key) return;
-
   girando = true;
 
   const index = sortearIndice();
@@ -226,22 +164,11 @@ function girar(){
   roleta.style.transform = `rotate(${anguloAtual}deg)`;
 
   setTimeout(()=>{
-
-    resultado.innerText = "🎉 Você ganhou " + premios[index];
-    resultado.style.color="#00ffae";
-
-    // 🔥 MARCA KEY COMO USADA
-    keysUsadas.push(key);
-    localStorage.setItem("keysUsadas", JSON.stringify(keysUsadas));
-    localStorage.removeItem("keyAtual");
-
-    girarBtn.style.display="none";
-
+    document.getElementById("resultado").innerText =
+      "🎉 Você ganhou " + premios[index];
     girando = false;
-
   },4000);
 }
-
 </script>
 
 </body>
