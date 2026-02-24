@@ -83,7 +83,7 @@ canvas{width:100%;height:100%}
 
 <body>
 
-<h1>🍀 death store 🍀</h1>
+<h1> death store </h1>
 
 <p>Digite sua key válida</p>
 <input id="keyInput" placeholder="Digite sua key">
@@ -101,8 +101,8 @@ canvas{width:100%;height:100%}
 
 <script>
 const premios = [
- "1 key","10.000.000 💎","58.000.000","25.000.000 💎","80.000.000 💎","3 key",
- "1 key","2.000.000 💎","2.000.000 💎"
+ "1 key","10.000.000 💎","20.000.000","3.000.000 💎","5.000.000 💎","3 key",
+ "1 key","nada 💎","nada 💎"
 ];
 
 const canvas = document.getElementById("canvas");
@@ -145,8 +145,8 @@ function sortearIndice(){
   let r = Math.random() * 100;
 
   if (r < 50) return premios.indexOf("1 key");
-  if (r < 85) return premios.indexOf("2.000.000 💎");
-  return premios.indexOf("2.000.000 💎");
+  if (r < 85) return premios.indexOf("nada:( 💎");
+  return premios.indexOf("nada 💎");
 }
 
 function girar(){
