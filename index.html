@@ -1,175 +1,240 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>death store - Roleta</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEATH STORE - ROLETA V2</title>
+    <style>
+        :root {
+            --red: #ff0000;
+            --black: #000000;
+            --dark-card: #0a0a0a;
+        }
 
-<style>
-body{
-  background: radial-gradient(circle at top,#2a003d,#0b0014);
-  color:#fff;
-  font-family:Arial, sans-serif;
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-align:center;
-}
+        body {
+            background: radial-gradient(circle at top, #1a0000, var(--black));
+            color: #fff;
+            font-family: 'Arial Black', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-h1{
-  color:#b84cff;
-  text-shadow:0 0 20px #7a00ff;
-  margin:25px 0 10px;
-}
+        h1 {
+            color: var(--red);
+            text-shadow: 0 0 20px var(--red);
+            margin: 25px 0;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 2rem;
+        }
 
-input{
-  padding:12px;
-  border-radius:10px;
-  border:none;
-  width:280px;
-  text-align:center;
-}
+        .container {
+            background: var(--dark-card);
+            padding: 25px;
+            border-radius: 20px;
+            border: 2px solid var(--red);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 35px rgba(255, 0, 0, 0.4);
+        }
 
-button{
-  margin-top:12px;
-  padding:14px 36px;
-  border:none;
-  border-radius:12px;
-  background:linear-gradient(135deg,#7a00ff,#b84cff);
-  color:#fff;
-  font-size:18px;
-  cursor:pointer;
-}
+        input {
+            width: 85%;
+            padding: 15px;
+            background: #000;
+            border: 1px solid var(--red);
+            color: var(--red);
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            outline: none;
+        }
 
-#girar{display:none}
+        button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #700, #f00);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
 
-.roleta-wrap{
-  margin-top:25px;
-  width:320px;
-  height:320px;
-  display:none;
-  position:relative;
-}
+        button:active { transform: scale(0.97); }
+        button:disabled { background: #333; opacity: 0.5; cursor: not-allowed; }
 
-.ponteiro{
-  position:absolute;
-  top:-12px;
-  left:50%;
-  transform:translateX(-50%);
-  border-left:16px solid transparent;
-  border-right:16px solid transparent;
-  border-bottom:28px solid gold;
-}
+        #game-area { display: none; }
+        
+        .roleta-wrap {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+        }
 
-.roleta{
-  width:100%;
-  height:100%;
-  border-radius:50%;
-  box-shadow:0 0 40px #9d4cff;
-  overflow:hidden;
-}
+        .ponteiro {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0; 
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid gold;
+            z-index: 50;
+        }
 
-canvas{width:100%;height:100%}
+        .roleta {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 6px solid var(--red);
+            overflow: hidden;
+            transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1);
+        }
 
-#resultado{
-  margin-top:15px;
-  font-size:22px;
-  font-weight:bold;
-}
-</style>
+        #resultado {
+            margin-top: 20px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+            min-height: 1.5em;
+        }
+    </style>
 </head>
-
 <body>
 
-<h1> death store </h1>
+    <h1>DEATH STORE</h1>
 
-<p>Digite sua key válida</p>
-<input id="keyInput" placeholder="Digite sua key">
-<button onclick="verificarKey()">Verificar Key</button>
-<button id="girar" onclick="girar()">🎡 Girar Roleta</button>
+    <div class="container">
+        <div id="login-area">
+            <p style="font-size: 0.8rem; margin-bottom: 15px; color: #bbb;">SISTEMA DE KEYS ÚNICAS</p>
+            <input type="text" id="keyInput" placeholder="INSIRA SUA KEY">
+            <button onclick="ativarKey()">VALIDAR ACESSO</button>
+        </div>
 
-<div class="roleta-wrap" id="roletaWrap">
-  <div class="ponteiro"></div>
-  <div class="roleta" id="roleta">
-    <canvas id="canvas" width="320" height="320"></canvas>
-  </div>
-</div>
-
-<div id="resultado"></div>
+        <div id="game-area">
+            <div class="roleta-wrap">
+                <div class="ponteiro"></div>
+                <div class="roleta" id="roleta">
+                    <canvas id="canvas" width="300" height="300"></canvas>
+                </div>
+            </div>
+            <button id="spinBtn" onclick="girarRoleta()">GIRAR ROLETA (5s)</button>
+            <div id="resultado"></div>
+        </div>
+    </div>
 
 <script>
-const premios = [
- "1 key","10.000.000 💎","3.000.000","20.000.000 💎","5.000.000 💎","3 key",
- "1.100.000","1.200.000 💎","1 key 💎"
-];
+    // --- DATABASE DE KEYS (PRÊMIOS QUE REALMENTE CAEM) ---
+    const BANCO_DE_KEYS = {
+        "DS-KEY-033": "1.500.000", "DS-KEY-022": "1.500.000", "DS-KEY-043": "1.500.000", "DS-KEY-04": "1.500.000",
+        "DS-KEY-052": "1.500.000", "DS-KEY-016": "1.500.000", "DS-KEY-074": "1.500.000", "DS-KEY-08": "1.500.000",
+        "DS-KEY-091": "1.500.000", "DS-KEY-102": "1.500.000", 
+        "DS-KEY-121": "1.000.000", "DS-KEY-112": "1.000.000", "DS-KEY-19": "1.000.000", "DS-KEY-14": "1.000.000",
+        "DS-KEY-15": "1.000.000", "DS-KEY-167": "1.000.000", "DS-KEY-197": "1.000.000", "DS-KEY-18": "1.000.000",
+        "DS-KEY-129": "1.000.000", "DS-KEY-270": "1.000.000"
+    };
 
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-const roleta = document.getElementById("roleta");
-const girarBtn = document.getElementById("girar");
-const wrap = document.getElementById("roletaWrap");
+    // --- INTERFACE VISUAL (16 FATIAS VARIADAS) ---
+    const premiosVisuais = [
+        "1.000.000",  // 0 (REAL)
+        "7.000.000",  // 1 (FAKE)
+        "1.500.000",  // 2 (REAL)
+        "12.000.000", // 3 (FAKE)
+        "1.000.000",  // 4 (REAL)
+        "4.000.000",  // 5 (FAKE)
+        "1.500.000",  // 6 (REAL)
+        "18.000.000", // 7 (FAKE)
+        "1.000.000",  // 8 (REAL)
+        "5.000.000",  // 9 (FAKE)
+        "1.500.000",  // 10 (REAL)
+        "25.000.000", // 11 (FAKE)
+        "1.000.000",  // 12 (REAL)
+        "15.000.000", // 13 (FAKE)
+        "1.500.000",  // 14 (REAL)
+        "3 KEYS VIP"  // 15 (FAKE)
+    ];
+    
+    let premioDestaKey = "";
+    const roleta = document.getElementById("roleta");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
 
-let anguloAtual = 0;
-let girando = false;
+    function ativarKey() {
+        const input = document.getElementById("keyInput").value.trim().toUpperCase();
+        const usadas = JSON.parse(localStorage.getItem('ds_usadas') || "[]");
 
-function verificarKey(){
-  girarBtn.style.display="inline-block";
-  wrap.style.display="block";
-}
+        if (usadas.includes(input)) return alert("ESSA KEY JÁ FOI UTILIZADA!");
 
-function desenhar(){
-  const n = premios.length;
-  const ang = Math.PI * 2 / n;
+        if (BANCO_DE_KEYS[input]) {
+            premioDestaKey = BANCO_DE_KEYS[input];
+            usadas.push(input);
+            localStorage.setItem('ds_usadas', JSON.stringify(usadas));
+            document.getElementById("login-area").style.display = "none";
+            document.getElementById("game-area").style.display = "block";
+            desenharRoleta();
+        } else {
+            alert("KEY INVÁLIDA!");
+        }
+    }
 
-  for(let i=0;i<n;i++){
-    ctx.beginPath();
-    ctx.moveTo(160,160);
-    ctx.arc(160,160,150,i*ang,(i+1)*ang);
-    ctx.fillStyle = i%2 ? "#3a0066" : "#7a00ff";
-    ctx.fill();
+    function desenharRoleta() {
+        const n = premiosVisuais.length;
+        const ang = (Math.PI * 2) / n;
+        ctx.clearRect(0,0,300,300);
 
-    ctx.save();
-    ctx.translate(160,160);
-    ctx.rotate(i*ang + ang/2);
-    ctx.fillStyle="#fff";
-    ctx.font="bold 13px Arial";
-    ctx.fillText(premios[i],90,5);
-    ctx.restore();
-  }
-}
-desenhar();
+        for (let i = 0; i < n; i++) {
+            ctx.beginPath();
+            ctx.moveTo(150, 150);
+            ctx.arc(150, 150, 150, i * ang, (i + 1) * ang);
+            ctx.fillStyle = i % 2 ? "#000000" : "#330000";
+            ctx.fill();
+            ctx.strokeStyle = "#ff0000";
+            ctx.lineWidth = 1;
+            ctx.stroke();
 
-function sortearIndice(){
-  let r = Math.random() * 100;
+            ctx.save();
+            ctx.translate(150, 150);
+            ctx.rotate(i * ang + ang / 2);
+            ctx.fillStyle = "#fff";
+            ctx.font = "bold 10px Arial";
+            ctx.fillText(premiosVisuais[i], 75, 5);
+            ctx.restore();
+        }
+    }
 
-  if (r < 50) return premios.indexOf("1.100.000");
-  if (r < 85) return premios.indexOf("1.200.000:( 💎");
-  return premios.indexOf("1 key 💎");
-}
+    function girarRoleta() {
+        const btn = document.getElementById("spinBtn");
+        btn.disabled = true;
 
-function girar(){
-  if(girando) return;
-  girando = true;
+        let indicesValidos = [];
+        premiosVisuais.forEach((v, i) => { if(v === premioDestaKey) indicesValidos.push(i); });
 
-  const index = sortearIndice();
-  const slice = 360 / premios.length;
+        const indexDestino = indicesValidos[Math.floor(Math.random() * indicesValidos.length)];
+        const fatia = 360 / premiosVisuais.length;
+        
+        // 10 voltas completas + compensação para o prêmio exato
+        const rotaçãoFinal = 3600 + (360 - (indexDestino * fatia + fatia / 2));
 
-  const destino = 360 * 6 + (360 - (index * slice + slice / 2)) - 90;
+        roleta.style.transform = `rotate(${rotaçãoFinal}deg)`;
 
-  anguloAtual = destino;
-
-  roleta.style.transition = "transform 4s cubic-bezier(.12,.78,.12,1)";
-  roleta.style.transform = `rotate(${anguloAtual}deg)`;
-
-  setTimeout(()=>{
-    document.getElementById("resultado").innerText =
-      "🎉 Você ganhou " + premios[index];
-    girando = false;
-  },4000);
-}
+        setTimeout(() => {
+            document.getElementById("resultado").innerHTML = 
+                `PARABÉNS!<br>VOCÊ RECEBEU ${premioDestaKey} GEMAS`;
+            btn.innerText = "COLETADO COM SUCESSO";
+        }, 5000);
+    }
 </script>
-
 </body>
 </html>
