@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEATH STORE - ROLETA V2</title>
+    <title>DEATH STORE - RESGATE</title>
     <style>
         :root {
             --red: #ff0000;
             --black: #000000;
-            --dark-card: #0a0a0a;
+            --dark: #0a0a0a;
         }
 
         body {
@@ -20,7 +20,6 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
         h1 {
@@ -28,12 +27,11 @@
             text-shadow: 0 0 20px var(--red);
             margin: 25px 0;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            font-size: 2rem;
+            letter-spacing: 3px;
         }
 
         .container {
-            background: var(--dark-card);
+            background: var(--dark);
             padding: 25px;
             border-radius: 20px;
             border: 2px solid var(--red);
@@ -66,18 +64,14 @@
             font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
-            transition: 0.2s;
         }
-
-        button:active { transform: scale(0.97); }
-        button:disabled { background: #333; opacity: 0.5; cursor: not-allowed; }
 
         #game-area { display: none; }
         
         .roleta-wrap {
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: 280px;
+            height: 280px;
             margin: 20px auto;
         }
 
@@ -98,17 +92,49 @@
             height: 100%;
             border-radius: 50%;
             border: 6px solid var(--red);
-            overflow: hidden;
             transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1);
         }
 
-        #resultado {
+        /* TELA DE RESGATE */
+        #resgate-card {
+            display: none;
+            background: #111;
+            border: 2px dashed var(--red);
+            padding: 20px;
             margin-top: 20px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #00ff00;
-            text-shadow: 0 0 10px #00ff00;
-            min-height: 1.5em;
+            border-radius: 15px;
+        }
+
+        .valor-ganho {
+            font-size: 2rem;
+            color: #0f0;
+            text-shadow: 0 0 10px #0f0;
+            margin: 10px 0;
+        }
+
+        .aviso-print {
+            color: #ff0;
+            font-size: 0.8rem;
+            animation: piscar 1s infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes piscar {
+            50% { opacity: 0.3; }
+        }
+
+        .qr-code {
+            background: white;
+            padding: 10px;
+            display: inline-block;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        .footer-info {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -118,55 +144,48 @@
 
     <div class="container">
         <div id="login-area">
-            <p style="font-size: 0.8rem; margin-bottom: 15px; color: #bbb;">SISTEMA DE KEYS ÚNICAS</p>
-            <input type="text" id="keyInput" placeholder="INSIRA SUA KEY">
+            <p style="font-size: 0.8rem; color: #bbb;">AUTENTICAÇÃO DE KEY</p>
+            <input type="text" id="keyInput" placeholder="COLE SUA KEY">
             <button onclick="ativarKey()">VALIDAR ACESSO</button>
         </div>
 
         <div id="game-area">
-            <div class="roleta-wrap">
-                <div class="ponteiro"></div>
-                <div class="roleta" id="roleta">
-                    <canvas id="canvas" width="300" height="300"></canvas>
+            <div id="roleta-container">
+                <div class="roleta-wrap">
+                    <div class="ponteiro"></div>
+                    <div class="roleta" id="roleta">
+                        <canvas id="canvas" width="300" height="300"></canvas>
+                    </div>
                 </div>
+                <button id="spinBtn" onclick="girarRoleta()">GIRAR ROLETA (5s)</button>
             </div>
-            <button id="spinBtn" onclick="girarRoleta()">GIRAR ROLETA (5s)</button>
-            <div id="resultado"></div>
+
+            <div id="resgate-card">
+                <div class="aviso-print">⚠️ TIRE UM PRINT E ENVIE PARA O MSK OU CANTE</div>
+                <p style="margin:0; font-size: 0.9rem;">PARABÉNS, VOCÊ GANHOU:</p>
+                <div class="valor-ganho" id="valFinal">0 GEMAS</div>
+                
+                <div class="qr-code" id="qrContainer">
+                    </div>
+                
+                <div style="font-size: 0.7rem; color: var(--red); margin: 5px 0;" id="keyResgate">KEY: ---</div>
+                <p class="footer-info">Envie este comprovante para validar seu prêmio.</p>
+            </div>
         </div>
     </div>
 
 <script>
-    // --- DATABASE DE KEYS (PRÊMIOS QUE REALMENTE CAEM) ---
     const BANCO_DE_KEYS = {
-        "DS-KEY-033": "1.500.000", "DS-KEY-022": "1.500.000", "DS-KEY-043": "1.500.000", "DS-KEY-04": "1.500.000",
-        "DS-KEY-052": "1.500.000", "DS-KEY-016": "1.500.000", "DS-KEY-074": "1.500.000", "DS-KEY-08": "1.500.000",
-        "DS-KEY-091": "1.500.000", "DS-KEY-102": "1.500.000", 
-        "DS-KEY-121": "1.000.000", "DS-KEY-112": "1.000.000", "DS-KEY-19": "1.000.000", "DS-KEY-14": "1.000.000",
-        "DS-KEY-15": "1.000.000", "DS-KEY-167": "1.000.000", "DS-KEY-197": "1.000.000", "DS-KEY-18": "1.000.000",
-        "DS-KEY-129": "1.000.000", "DS-KEY-270": "1.000.000"
+        "DS-KEY-01": "1.500.000", "DS-KEY-02": "1.500.000", "DS-KEY-03": "1.500.000",
+        "DS-KEY-04": "1.500.000", "DS-KEY-05": "1.000.000", "DS-KEY-06": "1.000.000",
+        "DS-KEY-07": "1.000.000", "DS-KEY-08": "1.500.000", "DS-KEY-09": "1.000.000",
+        "DS-KEY-10": "1.500.000", "DS-KEY-11": "1.000.000", "DS-KEY-12": "1.000.000"
     };
 
-    // --- INTERFACE VISUAL (16 FATIAS VARIADAS) ---
-    const premiosVisuais = [
-        "1.000.000",  // 0 (REAL)
-        "7.000.000",  // 1 (FAKE)
-        "1.500.000",  // 2 (REAL)
-        "12.000.000", // 3 (FAKE)
-        "1.000.000",  // 4 (REAL)
-        "4.000.000",  // 5 (FAKE)
-        "1.500.000",  // 6 (REAL)
-        "18.000.000", // 7 (FAKE)
-        "1.000.000",  // 8 (REAL)
-        "5.000.000",  // 9 (FAKE)
-        "1.500.000",  // 10 (REAL)
-        "25.000.000", // 11 (FAKE)
-        "1.000.000",  // 12 (REAL)
-        "15.000.000", // 13 (FAKE)
-        "1.500.000",  // 14 (REAL)
-        "3 KEYS VIP"  // 15 (FAKE)
-    ];
+    const premiosVisuais = ["1.000.000", "7.000.000", "1.500.000", "12.000.000", "1.000.000", "4.000.000", "1.500.000", "18.000.000", "1.000.000", "5.000.000", "1.500.000", "25.000.000", "1.000.000", "15.000.000", "1.500.000", "5 KEYS"];
     
     let premioDestaKey = "";
+    let keyUsada = "";
     const roleta = document.getElementById("roleta");
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
@@ -179,6 +198,7 @@
 
         if (BANCO_DE_KEYS[input]) {
             premioDestaKey = BANCO_DE_KEYS[input];
+            keyUsada = input;
             usadas.push(input);
             localStorage.setItem('ds_usadas', JSON.stringify(usadas));
             document.getElementById("login-area").style.display = "none";
@@ -192,47 +212,43 @@
     function desenharRoleta() {
         const n = premiosVisuais.length;
         const ang = (Math.PI * 2) / n;
-        ctx.clearRect(0,0,300,300);
-
         for (let i = 0; i < n; i++) {
             ctx.beginPath();
             ctx.moveTo(150, 150);
             ctx.arc(150, 150, 150, i * ang, (i + 1) * ang);
-            ctx.fillStyle = i % 2 ? "#000000" : "#330000";
+            ctx.fillStyle = i % 2 ? "#000" : "#300";
             ctx.fill();
-            ctx.strokeStyle = "#ff0000";
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = "#f00";
             ctx.stroke();
-
             ctx.save();
             ctx.translate(150, 150);
             ctx.rotate(i * ang + ang / 2);
             ctx.fillStyle = "#fff";
-            ctx.font = "bold 10px Arial";
-            ctx.fillText(premiosVisuais[i], 75, 5);
+            ctx.font = "bold 9px Arial";
+            ctx.fillText(premiosVisuais[i], 80, 5);
             ctx.restore();
         }
     }
 
     function girarRoleta() {
-        const btn = document.getElementById("spinBtn");
-        btn.disabled = true;
-
-        let indicesValidos = [];
-        premiosVisuais.forEach((v, i) => { if(v === premioDestaKey) indicesValidos.push(i); });
-
-        const indexDestino = indicesValidos[Math.floor(Math.random() * indicesValidos.length)];
+        document.getElementById("spinBtn").disabled = true;
+        let indices = [];
+        premiosVisuais.forEach((v, i) => { if(v === premioDestaKey) indices.push(i); });
+        const index = indices[Math.floor(Math.random() * indices.length)];
         const fatia = 360 / premiosVisuais.length;
-        
-        // 10 voltas completas + compensação para o prêmio exato
-        const rotaçãoFinal = 3600 + (360 - (indexDestino * fatia + fatia / 2));
-
+        const rotaçãoFinal = 3600 + (360 - (index * fatia + fatia / 2));
         roleta.style.transform = `rotate(${rotaçãoFinal}deg)`;
 
         setTimeout(() => {
-            document.getElementById("resultado").innerHTML = 
-                `PARABÉNS!<br>VOCÊ RECEBEU ${premioDestaKey} GEMAS`;
-            btn.innerText = "COLETADO COM SUCESSO";
+            // Esconde roleta e mostra resgate
+            document.getElementById("roleta-container").style.display = "none";
+            document.getElementById("resgate-card").style.display = "block";
+            document.getElementById("valFinal").innerText = premioDestaKey + " GEMAS";
+            document.getElementById("keyResgate").innerText = "AUTH KEY: " + keyUsada;
+            
+            // Gera QR Code falso mas visualmente autêntico
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=DEATHSTORE-${keyUsada}-${premioDestaKey}`;
+            document.getElementById("qrContainer").innerHTML = `<img src="${qrUrl}" alt="QR">`;
         }, 5000);
     }
 </script>
